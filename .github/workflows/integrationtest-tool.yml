@@ -1,4 +1,4 @@
-name: IntegrationTest-Tool
+name: IntegrationTests
 
 on:
   workflow_call:

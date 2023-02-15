@@ -1,4 +1,4 @@
-name: ReportGenerator-Tool
+name: ReportGenerator
 
 on:
   workflow_call:

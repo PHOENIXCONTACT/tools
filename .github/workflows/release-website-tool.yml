@@ -1,4 +1,4 @@
-name: ReleaseWebsite-Tool
+name: Release-Website
 
 on:
   workflow_call:
