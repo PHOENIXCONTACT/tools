@@ -37,4 +37,4 @@ jobs:
         with:
           name: documentation
           path: artifacts/Documentation/
-          retention-days: 1
+          retention-days: 2
