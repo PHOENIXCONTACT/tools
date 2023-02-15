@@ -1,0 +1,48 @@
+name: Release-Website
+
+on:
+  workflow_call:
+    inputs:
+      dotnet_sdk_version:
+        required: true
+        type: string
+      REPOSITORY_NAME:
+        required: true
+        type: string
+      MORYX_OPTIMIZE_CODE:
+        required: false
+        type: string
+      MORYX_BUILD_CONFIG:
+        required: false
+        type: string
+      MORYX_BUILDNUMBER:
+        required: false
+        type: string
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE:
+        required: false
+        type: boolean
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  Release-Website:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download coverage results
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{inputs.REPOSITORY_NAME}}-coverage-results
+          path: artifacts/coverage-results
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Deploy static site to S3 bucket
+        run: aws s3 sync artifacts/coverage-results s3://moryx-code-coverage/${{inputs.REPOSITORY_NAME}}/${GITHUB_REF#refs/heads/} --delete
