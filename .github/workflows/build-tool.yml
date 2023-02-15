@@ -10,16 +10,16 @@ on:
         required: true
         type: string
       MORYX_OPTIMIZE_CODE:
-        required: true
+        required: false
         type: string
       MORYX_BUILD_CONFIG:
-        required: true
+        required: false
         type: string
       MORYX_BUILDNUMBER:
-        required: true
+        required: false
         type: string
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE:
-        required: true
+        required: false
         type: boolean
 
 jobs:
