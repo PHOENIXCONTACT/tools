@@ -1,0 +1,43 @@
+name: UnitTest-Tool
+
+on:
+  workflow_call:
+    inputs:
+      dotnet_sdk_version:
+        required: true
+        type: string
+      REPOSITORY_NAME:
+        required: true
+        type: string
+
+jobs:
+  UnitTests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET SDK standard (7)
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ inputs.dotnet_sdk_version }}
+
+      - name: Setup .NET SDK 6 for testing purposes
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.x
+
+      - name: Execute dotnet restore
+        run: dotnet restore
+
+      - name: Execute dotnet build
+        run: dotnet build
+
+      - name: Execute dotnet test (needs coverlet.collector nuget)
+        run: dotnet test --collect:"XPlat Code Coverage"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{inputs.REPOSITORY_NAME}}-test-results
+          path: src\Tests\**\TestResults\**\coverage.cobertura.xml
+          retention-days: 1

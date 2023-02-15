@@ -1,0 +1,21 @@
+name: Documentation-Tool
+
+on:
+  workflow_call:
+
+jobs:
+  Documentation:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Generate docFx
+        shell: pwsh
+        run: ./Build.ps1 -GenerateDocs
+
+      - name: Upload documentation results
+        uses: actions/upload-artifact@v2
+        with:
+          name: documentation
+          path: artifacts/Documentation/
+          retention-days: 1

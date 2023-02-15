@@ -1,0 +1,32 @@
+name: ReportGenerator-Tool
+
+on:
+  workflow_call:
+    inputs:
+      REPOSITORY_NAME:
+        required: true
+        type: string
+
+jobs:
+  ReportGenerator:
+    runs-on: windows-latest
+    steps:
+      - name: Download test results
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{inputs.REPOSITORY_NAME}}-test-results
+          path: artifacts/test-results
+          
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.1.12
+        with:
+          reports: artifacts/test-results/**/TestResults\**\coverage.cobertura.xml; artifacts/test-results/*.Cobertura.xml
+          targetdir: Coverage
+          reporttypes: Html
+          
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{inputs.REPOSITORY_NAME}}-coverage-results
+          path: Coverage/
+          retention-days: 1

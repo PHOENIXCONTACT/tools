@@ -1,0 +1,33 @@
+name: IntegrationTest-Tool
+
+on:
+  workflow_call:
+    inputs:
+      dotnet_sdk_version:
+        required: true
+        type: string
+      REPOSITORY_NAME:
+        required: true
+        type: string
+
+jobs:
+  IntegrationTests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ inputs.dotnet_sdk_version }}
+
+      - name: Execute Integration Tests
+        shell: pwsh
+        run: ./Build.ps1 -IntegrationTests
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{inputs.REPOSITORY_NAME}}-test-results
+          path: artifacts/Tests/
+          retention-days: 1

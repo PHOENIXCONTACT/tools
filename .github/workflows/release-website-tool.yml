@@ -1,0 +1,28 @@
+name: ReleaseWebsite-Tool
+
+on:
+  workflow_call:
+    inputs:
+      REPOSITORY_NAME:
+        required: true
+        type: string
+
+jobs:
+  Release-Website:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download coverage results
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{inputs.REPOSITORY_NAME}}-coverage-results
+          path: artifacts/coverage-results
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Deploy static site to S3 bucket
+        run: aws s3 sync artifacts/coverage-results s3://moryx-code-coverage/${{inputs.REPOSITORY_NAME}}/${GITHUB_REF#refs/heads/} --delete

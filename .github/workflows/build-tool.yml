@@ -1,0 +1,30 @@
+name: Build-Tool
+
+on:
+  workflow_call:
+    inputs:
+      dotnet_sdk_version:
+        required: true
+        type: string
+
+jobs:
+  Build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ inputs.dotnet_sdk_version }}
+
+      - name: Build
+        shell: pwsh
+        run: ./Build.ps1 -Build -Pack
+
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: packages
+          path: artifacts/Packages/
+          retention-days: 1
