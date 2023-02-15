@@ -9,6 +9,18 @@ on:
       REPOSITORY_NAME:
         required: true
         type: string
+      MORYX_OPTIMIZE_CODE:
+        required: true
+        type: string
+      MORYX_BUILD_CONFIG:
+        required: true
+        type: string
+      MORYX_BUILDNUMBER:
+        required: true
+        type: string
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE:
+        required: true
+        type: boolean
 
 jobs:
   UnitTests:
