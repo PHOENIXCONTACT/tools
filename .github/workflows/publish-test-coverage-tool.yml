@@ -1,4 +1,4 @@
-name: Release-Website
+name: Publish-Test-Coverage
 
 on:
   workflow_call:
@@ -28,7 +28,8 @@ on:
         required: true
 
 jobs:
-  Release-Website:
+  Publish-Test-Coverage:
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
       - name: Download coverage results
