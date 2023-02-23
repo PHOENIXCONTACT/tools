@@ -33,12 +33,12 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ inputs.dotnet_sdk_version }}
-  
+
       - name: Download package artifacts
         uses: actions/download-artifact@v2
         with:
@@ -49,25 +49,37 @@ jobs:
         if: ${{ github.ref == 'refs/heads/dev' }} # dev branche is published to myget moryx
         shell: pwsh
         env:
+          MORYX_BUILDNUMBER: ${{inputs.MORYX_BUILDNUMBER}}
+          MORYX_OPTIMIZE_CODE: ${{inputs.MORYX_OPTIMIZE_CODE}}
+          MORYX_BUILD_CONFIG: ${{inputs.MORYX_BUILD_CONFIG}}
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: ${{inputs.DOTNET_SKIP_FIRST_TIME_EXPERIENCE}}
           MORYX_NUGET_APIKEY: ${{secrets.MYGET_TOKEN}}
-          MORYX_PACKAGE_TARGET: "https://www.myget.org/F/moryx/api/v2/package"
-          MORYX_PACKAGE_TARGET_V3: "https://www.myget.org/F/moryx/api/v3/index.json"
+          MORYX_PACKAGE_TARGET: 'https://www.myget.org/F/moryx/api/v2/package'
+          MORYX_PACKAGE_TARGET_V3: 'https://www.myget.org/F/moryx/api/v3/index.json'
         run: ./Build.ps1 -Publish
 
       - name: Publish on MyGet-Future
         if: ${{ github.ref == 'refs/heads/future' }} # Future branch is published to myget moryx-future
         shell: pwsh
         env:
+          MORYX_BUILDNUMBER: ${{inputs.MORYX_BUILDNUMBER}}
+          MORYX_OPTIMIZE_CODE: ${{inputs.MORYX_OPTIMIZE_CODE}}
+          MORYX_BUILD_CONFIG: ${{inputs.MORYX_BUILD_CONFIG}}
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: ${{inputs.DOTNET_SKIP_FIRST_TIME_EXPERIENCE}}
           MORYX_NUGET_APIKEY: ${{secrets.MYGET_TOKEN}}
-          MORYX_PACKAGE_TARGET: "https://www.myget.org/F/moryx-future/api/v2/package"
-          MORYX_PACKAGE_TARGET_V3: "https://www.myget.org/F/moryx-future/api/v3/index.json"
+          MORYX_PACKAGE_TARGET: 'https://www.myget.org/F/moryx-future/api/v2/package'
+          MORYX_PACKAGE_TARGET_V3: 'https://www.myget.org/F/moryx-future/api/v3/index.json'
         run: ./Build.ps1 -Publish
 
       - name: Publish on NuGet
         if: ${{ startsWith(github.ref, 'refs/tags/v') }} # Version Tags are published to nuget
         shell: pwsh
         env:
+          MORYX_BUILDNUMBER: ${{inputs.MORYX_BUILDNUMBER}}
+          MORYX_OPTIMIZE_CODE: ${{inputs.MORYX_OPTIMIZE_CODE}}
+          MORYX_BUILD_CONFIG: ${{inputs.MORYX_BUILD_CONFIG}}
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: ${{inputs.DOTNET_SKIP_FIRST_TIME_EXPERIENCE}}
           MORYX_NUGET_APIKEY: ${{secrets.NUGET_TOKEN}}
-          MORYX_PACKAGE_TARGET: "https://api.nuget.org/v3/index.json"
-          MORYX_PACKAGE_TARGET_V3: "https://api.nuget.org/v3/index.json"
+          MORYX_PACKAGE_TARGET: 'https://api.nuget.org/v3/index.json'
+          MORYX_PACKAGE_TARGET_V3: 'https://api.nuget.org/v3/index.json'
         run: ./Build.ps1 -Publish

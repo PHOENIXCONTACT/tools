@@ -30,6 +30,11 @@ jobs:
 
       - name: Generate docFx
         shell: pwsh
+        env:
+          MORYX_BUILDNUMBER: ${{inputs.MORYX_BUILDNUMBER}}
+          MORYX_OPTIMIZE_CODE: ${{inputs.MORYX_OPTIMIZE_CODE}}
+          MORYX_BUILD_CONFIG: ${{inputs.MORYX_BUILD_CONFIG}}
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: ${{inputs.DOTNET_SKIP_FIRST_TIME_EXPERIENCE}}
         run: ./Build.ps1 -GenerateDocs
 
       - name: Upload documentation results
