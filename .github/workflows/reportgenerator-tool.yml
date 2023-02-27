@@ -26,6 +26,8 @@ jobs:
   ReportGenerator:
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v2
+      
       - name: Download test results
         uses: actions/download-artifact@v2
         with:
