@@ -3,28 +3,13 @@ name: ReportGenerator
 on:
   workflow_call:
     inputs:
-      dotnet_sdk_version:
-        required: true
-        type: string
       REPOSITORY_NAME:
         required: true
         type: string
-      MORYX_OPTIMIZE_CODE:
-        required: false
-        type: string
-      MORYX_BUILD_CONFIG:
-        required: false
-        type: string
-      MORYX_BUILDNUMBER:
-        required: false
-        type: string
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE:
-        required: false
-        type: boolean
 
 jobs:
   ReportGenerator:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       
@@ -37,7 +22,7 @@ jobs:
       - name: ReportGenerator
         uses: danielpalme/ReportGenerator-GitHub-Action@5.1.12
         with:
-          reports: artifacts/test-results/**/TestResults\**\coverage.cobertura.xml; artifacts/test-results/*.Cobertura.xml
+          reports: artifacts/test-results/**/TestResults/**/coverage.cobertura.xml
           targetdir: Coverage
           reporttypes: Html
           
