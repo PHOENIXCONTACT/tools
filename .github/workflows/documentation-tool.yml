@@ -11,14 +11,11 @@ jobs:
   Documentation:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: nuget/setup-nuget@v1
-        with:
-          nuget-version: latest
+      - name: Checkout code 
+        uses: actions/checkout@v2
 
       - name: Build Documentation
-        uses: nunit/docfx-action@v2.4.0  
+        uses: nunit/docfx-action@v2.6.0  
         with:
           args: docs/docfx.json
 
