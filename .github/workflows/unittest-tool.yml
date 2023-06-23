@@ -14,17 +14,13 @@ jobs:
   UnitTests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code 
+        uses: actions/checkout@v2
 
-      - name: Setup .NET SDK standard (7)
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ inputs.dotnet_sdk_version }}
-
-      - name: Setup .NET SDK 6 for testing purposes
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 6.x
 
       - name: Setup Node version
         uses: actions/setup-node@v3
