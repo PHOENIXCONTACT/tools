@@ -9,34 +9,18 @@ on:
       REPOSITORY_NAME:
         required: true
         type: string
-      MORYX_OPTIMIZE_CODE:
-        required: false
-        type: string
-      MORYX_BUILD_CONFIG:
-        required: false
-        type: string
-      MORYX_BUILDNUMBER:
-        required: false
-        type: string
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE:
-        required: false
-        type: boolean
 
 jobs:
   UnitTests:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code 
+        uses: actions/checkout@v2
 
-      - name: Setup .NET SDK standard (7)
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ inputs.dotnet_sdk_version }}
-
-      - name: Setup .NET SDK 6 for testing purposes
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 6.x
 
       - name: Setup Node version
         uses: actions/setup-node@v3
@@ -50,14 +34,14 @@ jobs:
         run: dotnet restore
 
       - name: Execute dotnet build
-        run: dotnet build
+        run: dotnet build --no-restore
 
       - name: Execute dotnet test (needs coverlet.collector nuget)
-        run: dotnet test --collect:"XPlat Code Coverage"
+        run: dotnet test --no-build --filter FullyQualifiedName!~Integration --collect:"XPlat Code Coverage"
 
       - name: Upload test results
         uses: actions/upload-artifact@v2
         with:
           name: ${{inputs.REPOSITORY_NAME}}-test-results
-          path: src\Tests\**\TestResults\**\coverage.cobertura.xml
+          path: src/Tests/**/TestResults/**/coverage.cobertura.xml
           retention-days: 1
