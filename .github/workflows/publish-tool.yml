@@ -79,4 +79,4 @@ jobs:
           MORYX_NUGET_APIKEY: ${{secrets.NUGET_TOKEN}}
           MORYX_PACKAGE_TARGET: ${{ inputs.MORYX_PACKAGE_TARGET_RELEASE }}
           MORYX_PACKAGE_TARGET_V3: ${{ inputs.MORYX_PACKAGE_TARGET_V3_RELEASE }}
-        run: dotnet nuget push "artifacts/packages/" --api-key $MORYX_NUGET_APIKEY --source $MORYX_PACKAGE_TARGET --skip-duplicate --symbol-api-key $MORYX_NUGET_APIKEY --symbol-source $MORYX_PACKAGE_TARGET_V3
+        run: dotnet nuget push "artifacts/packages/" --api-key $MORYX_NUGET_APIKEY --source $MORYX_PACKAGE_TARGET --skip-duplicate
