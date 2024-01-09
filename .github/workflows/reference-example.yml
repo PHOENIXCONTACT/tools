@@ -40,7 +40,7 @@ jobs:
 
   Build:
     needs: [SetupEnvironment]
-    uses: phoenixcontact/tools/.github/workflows/build-tool.yml@future
+    uses: $GITHUB_REPOSITORY/.github/workflows/build-tool.yml@future
     with:
       dotnet_sdk_version: ${{ needs.SetupEnvironment.outputs.dotnet_sdk_version }}
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
@@ -54,20 +54,20 @@ jobs:
 
   IntegrationTests:
     needs: [SetupEnvironment, Build]
-    uses: phoenixcontact/tools/.github/workflows/integrationtest-tool.yml@future
+    uses: $GITHUB_REPOSITORY/.github/workflows/integrationtest-tool.yml@future
     with:
       dotnet_sdk_version: ${{ needs.SetupEnvironment.outputs.dotnet_sdk_version }}
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
 
   ReportGenerator:
     needs: [SetupEnvironment, UnitTests, IntegrationTests]
-    uses: phoenixcontact/tools/.github/workflows/reportgenerator-tool.yml@future
+    uses: $GITHUB_REPOSITORY/.github/workflows/reportgenerator-tool.yml@future
     with:
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
                
   Publish-Test-Coverage:
     needs: [SetupEnvironment, ReportGenerator]
-    uses: phoenixcontact/tools/.github/workflows/publish-test-coverage-tool.yml@future
+    uses: $GITHUB_REPOSITORY/.github/workflows/publish-test-coverage-tool.yml@future
     with:
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
     secrets:
@@ -77,13 +77,13 @@ jobs:
 
   Documentation:
     needs: [SetupEnvironment, UnitTests]
-    uses: phoenixcontact/tools/.github/workflows/documentation-tool.yml@future
+    uses: $GITHUB_REPOSITORY/.github/workflows/documentation-tool.yml@future
     with:
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
 
   Publish:
     needs: [SetupEnvironment, UnitTests]
-    uses: phoenixcontact/tools/.github/workflows/publish-tool.yml@future
+    uses: $GITHUB_REPOSITORY/.github/workflows/publish-tool.yml@future
     with:
       dotnet_sdk_version: ${{ needs.SetupEnvironment.outputs.dotnet_sdk_version }}
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
