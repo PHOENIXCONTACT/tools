@@ -54,8 +54,8 @@ jobs:
           MORYX_BUILD_CONFIG: ${{inputs.MORYX_BUILD_CONFIG}}
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: ${{inputs.DOTNET_SKIP_FIRST_TIME_EXPERIENCE}}
           MORYX_NUGET_APIKEY: ${{secrets.MYGET_TOKEN}}
-          MORYX_PACKAGE_TARGET: 'https://www.myget.org/F/moryx/api/v2/package'
-          MORYX_PACKAGE_TARGET_V3: 'https://www.myget.org/F/moryx/api/v3/index.json'
+          MORYX_PACKAGE_TARGET: 'https://www.myget.org/F/moryx-oss-ci/api/v2/package'
+          MORYX_PACKAGE_TARGET_V3: 'https://www.myget.org/F/moryx-oss-ci/api/v3/index.json'
         run: ./Build.ps1 -Publish
 
       - name: Publish on MyGet-Future
@@ -67,8 +67,8 @@ jobs:
           MORYX_BUILD_CONFIG: ${{inputs.MORYX_BUILD_CONFIG}}
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: ${{inputs.DOTNET_SKIP_FIRST_TIME_EXPERIENCE}}
           MORYX_NUGET_APIKEY: ${{secrets.MYGET_TOKEN}}
-          MORYX_PACKAGE_TARGET: 'https://www.myget.org/F/moryx-future/api/v2/package'
-          MORYX_PACKAGE_TARGET_V3: 'https://www.myget.org/F/moryx-future/api/v3/index.json'
+          MORYX_PACKAGE_TARGET: 'https://www.myget.org/F/moryx-oss-ci/api/v2/package'
+          MORYX_PACKAGE_TARGET_V3: 'https://www.myget.org/F/moryx-oss-ci/api/v3/index.json'
         run: ./Build.ps1 -Publish
 
       - name: Publish on NuGet
