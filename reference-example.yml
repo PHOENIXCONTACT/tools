@@ -40,34 +40,34 @@ jobs:
 
   Build:
     needs: [SetupEnvironment]
-    uses: phoenixcontact/tools/.github/workflows/build-tool.yml@future
+    uses: phoenixcontact/tools/.github/workflows/build-tool.yml
     with:
       dotnet_sdk_version: ${{ needs.SetupEnvironment.outputs.dotnet_sdk_version }}
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
 
   UnitTests:
     needs: [SetupEnvironment, Build]
-    uses: ./.github/workflows/unittest-tool.yml@future
+    uses: ./.github/workflows/unittest-tool.yml
     with:
       dotnet_sdk_version: ${{ needs.SetupEnvironment.outputs.dotnet_sdk_version }}
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
 
   IntegrationTests:
     needs: [SetupEnvironment, Build]
-    uses: phoenixcontact/tools/.github/workflows/integrationtest-tool.yml@future
+    uses: phoenixcontact/tools/.github/workflows/integrationtest-tool.yml
     with:
       dotnet_sdk_version: ${{ needs.SetupEnvironment.outputs.dotnet_sdk_version }}
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
 
   ReportGenerator:
     needs: [SetupEnvironment, UnitTests, IntegrationTests]
-    uses: phoenixcontact/tools/.github/workflows/reportgenerator-tool.yml@future
+    uses: phoenixcontact/tools/.github/workflows/reportgenerator-tool.yml
     with:
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
                
   Publish-Test-Coverage:
     needs: [SetupEnvironment, ReportGenerator]
-    uses: phoenixcontact/tools/.github/workflows/publish-test-coverage-tool.yml@future
+    uses: phoenixcontact/tools/.github/workflows/publish-test-coverage-tool.yml
     with:
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
     secrets:
@@ -77,13 +77,13 @@ jobs:
 
   Documentation:
     needs: [SetupEnvironment, UnitTests]
-    uses: phoenixcontact/tools/.github/workflows/documentation-tool.yml@future
+    uses: phoenixcontact/tools/.github/workflows/documentation-tool.yml
     with:
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
 
   Publish:
     needs: [SetupEnvironment, UnitTests]
-    uses: phoenixcontact/tools/.github/workflows/publish-tool.yml@future
+    uses: phoenixcontact/tools/.github/workflows/publish-tool.yml
     with:
       dotnet_sdk_version: ${{ needs.SetupEnvironment.outputs.dotnet_sdk_version }}
       REPOSITORY_NAME: ${{ needs.SetupEnvironment.outputs.REPOSITORY_NAME }}
@@ -96,4 +96,3 @@ jobs:
     secrets: 
       MYGET_TOKEN: ${{secrets.MYGET_TOKEN}}
       NUGET_TOKEN: ${{secrets.NUGET_TOKEN}}
-      
