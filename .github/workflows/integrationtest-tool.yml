@@ -42,7 +42,7 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@v2
         with:
-          name: ${{inputs.REPOSITORY_NAME}}-test-results
+          name: ${{inputs.REPOSITORY_NAME}}-integration-test-results
           path: src/Tests/**/TestResults/**/coverage.cobertura.xml
           retention-days: 1
 
