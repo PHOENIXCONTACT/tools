@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Download test results
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ${{inputs.REPOSITORY_NAME}}-test-results
           path: artifacts/test-results
@@ -28,7 +28,7 @@ jobs:
           reporttypes: Html
           
       - name: Upload test results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{inputs.REPOSITORY_NAME}}-coverage-results
           path: Coverage/

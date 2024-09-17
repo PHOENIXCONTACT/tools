@@ -40,7 +40,7 @@ jobs:
         run: dotnet test --no-build --filter FullyQualifiedName!~Integration --collect:"XPlat Code Coverage"
 
       - name: Upload test results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{inputs.REPOSITORY_NAME}}-test-results
           path: src/Tests/**/TestResults/**/coverage.cobertura.xml

@@ -49,7 +49,7 @@ jobs:
         uses: NuGet/setup-nuget@v1
 
       - name: Download package artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ${{inputs.REPOSITORY_NAME}}-packages
           path: artifacts/packages/
