@@ -51,7 +51,7 @@ jobs:
         run: ./Build.ps1 -IntegrationTests
 
       - name: Upload test results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{inputs.REPOSITORY_NAME}}-test-results
           path: artifacts/Tests/

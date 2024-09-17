@@ -38,7 +38,7 @@ jobs:
         run: ./Build.ps1 -GenerateDocs
 
       - name: Upload documentation results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: documentation
           path: artifacts/Documentation/
