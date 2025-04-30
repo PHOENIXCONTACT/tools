@@ -56,7 +56,7 @@ jobs:
 
       # Use if dev branch 
       - name: Publish on MyGet-CI
-        if: ${{ github.ref == 'refs/heads/dev' }} # dev branche is published to myget moryx
+        if: ${{ github.ref == 'refs/heads/dev' || github.base_ref == 'dev' }} # dev branche is published to myget moryx
         env:
           MORYX_NUGET_APIKEY: ${{secrets.MYGET_TOKEN}}
           MORYX_PACKAGE_TARGET: ${{ inputs.MORYX_PACKAGE_TARGET_DEV }}
