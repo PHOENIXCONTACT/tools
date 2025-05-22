@@ -46,3 +46,9 @@ To add the information gathered in the workflow to be shown on the MORYX-CodeCov
 ## Contribute
 
 If you have an idea to improve a template or can think of a new useful template, please make your changes based on one of the template branches and open a pull request. If you want to add a template, extend the branch list in one commit and the template definition in another. This way we can easily put your template into a separate branch. **Note:** All branches except *master* will be rebased regularly, to keep grafting them easy. To avoid losing previous merge request information, all branch merge requests are merged by rebase squashing.
+
+### Github ref variables
+
+The detailted documentation is [here](https://docs.github.com/de/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs#github-context). However it was not always obvious what value was where.
+
+- current branch: When building on a push to e.g. dev, the current branch is in `ref_name`. However in pull requests this refers to the pull-request id and you need `head_ref` instead
