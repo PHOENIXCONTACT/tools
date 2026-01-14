@@ -14,7 +14,9 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
+        with:
+          lfs: true
       
       - name: Setup Node version
         uses: actions/setup-node@v3
