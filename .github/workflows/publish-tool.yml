@@ -15,12 +15,6 @@ on:
       MORYX_PACKAGE_TARGET_V3_DEV:
         required: true
         type: string
-      MORYX_PACKAGE_TARGET_FUTURE:
-        required: true
-        type: string
-      MORYX_PACKAGE_TARGET_V3_FUTURE:
-        required: true
-        type: string
       MORYX_PACKAGE_TARGET_RELEASE:
         required: true
         type: string
@@ -56,24 +50,16 @@ jobs:
           name: ${{inputs.REPOSITORY_NAME}}-packages
           path: artifacts/packages/
 
-      # Use if dev branch 
-      - name: Publish on MyGet-CI
-        if: ${{ github.ref == 'refs/heads/dev' }} # dev branche is published to myget moryx
+      # Use if development branch 
+      - name: Publish on MyGet
+        if: ${{ github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/future' || startsWith(github.ref, 'refs/heads/integration/') }} # dev, future and integration/* is published to myget
         env:
           MORYX_NUGET_APIKEY: ${{secrets.MYGET_TOKEN}}
           MORYX_PACKAGE_TARGET: ${{ inputs.MORYX_PACKAGE_TARGET_DEV }}
           MORYX_PACKAGE_TARGET_V3: ${{ inputs.MORYX_PACKAGE_TARGET_V3_DEV }}
         run: dotnet nuget push "artifacts/packages/" --api-key $MORYX_NUGET_APIKEY --source $MORYX_PACKAGE_TARGET --skip-duplicate --symbol-api-key $MORYX_NUGET_APIKEY --symbol-source $MORYX_PACKAGE_TARGET_V3
     
-      # Use if future branch 
-      - name: Publish on MyGet-CI
-        if: ${{ github.ref == 'refs/heads/future' }} # Future branch is published to myget moryx-future
-        env:
-          MORYX_NUGET_APIKEY: ${{secrets.MYGET_TOKEN}}
-          MORYX_PACKAGE_TARGET: ${{ inputs.MORYX_PACKAGE_TARGET_FUTURE }}
-          MORYX_PACKAGE_TARGET_V3: ${{ inputs.MORYX_PACKAGE_TARGET_V3_FUTURE }}
-        run: dotnet nuget push "artifacts/packages/" --api-key $MORYX_NUGET_APIKEY --source $MORYX_PACKAGE_TARGET --skip-duplicate --symbol-api-key $MORYX_NUGET_APIKEY --symbol-source $MORYX_PACKAGE_TARGET_V3
-    
+
        # Use if tag
       - name: Publish on NuGet
         if: ${{ startsWith(github.ref, 'refs/tags/v') }} # Version Tags are published to nuget
