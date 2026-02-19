@@ -52,7 +52,7 @@ jobs:
 
       # Use if development branch 
       - name: Publish on MyGet
-        if: ${{ github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/future' || startsWith(github.ref, 'refs/heads/integration/') }} # dev, future and integration/* is published to myget
+        if: ${{ github.ref_name == 'dev' || github.ref_name == 'future' || startsWith(github.ref_name, 'integration/') }} # dev, future and integration/* is published to myget
         env:
           MORYX_NUGET_APIKEY: ${{secrets.MYGET_TOKEN}}
           MORYX_PACKAGE_TARGET: ${{ inputs.MORYX_PACKAGE_TARGET_DEV }}
