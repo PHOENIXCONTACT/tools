@@ -29,7 +29,16 @@ on:
 
 jobs:
   Publish:
-    if: ${{ github.event_name == 'push' }}
+    if: >
+      (github.event_name == 'push' && (
+        github.ref_name == 'dev' ||
+        github.ref_name == 'future' ||
+        startsWith(github.ref, 'refs/tags/v') ||
+        startsWith(github.ref_name, 'integration/')
+      )) ||
+      (github.event_name == 'pull_request' &&
+        startsWith(github.head_ref, 'integration/')
+      )
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -40,32 +49,35 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ inputs.dotnet_sdk_version }}
-          
+
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1
 
       - name: Download package artifacts
         uses: actions/download-artifact@v4
         with:
-          name: ${{inputs.REPOSITORY_NAME}}-packages
+          name: ${{ inputs.REPOSITORY_NAME }}-packages
           path: artifacts/packages/
 
       # Use if development branch 
-      - name: Publish on MyGet
+      - name: Publish on MyGet (dev/future/integration branches)
         if: >
-          (github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'future')) ||
-          (github.event_name == 'pull_request' && startsWith(github.head_ref, 'integration/'))
-        env:
-          MORYX_NUGET_APIKEY: ${{secrets.MYGET_TOKEN}}
-          MORYX_PACKAGE_TARGET: ${{ inputs.MORYX_PACKAGE_TARGET_DEV }}
-          MORYX_PACKAGE_TARGET_V3: ${{ inputs.MORYX_PACKAGE_TARGET_V3_DEV }}
-        run: dotnet nuget push "artifacts/packages/" --api-key $MORYX_NUGET_APIKEY --source $MORYX_PACKAGE_TARGET --skip-duplicate --symbol-api-key $MORYX_NUGET_APIKEY --symbol-source $MORYX_PACKAGE_TARGET_V3
-    
-       # Use if tag
-      - name: Publish on NuGet
-        if: ${{ startsWith(github.ref, 'refs/tags/v') }} # Version Tags are published to nuget
-        env:
-          MORYX_NUGET_APIKEY: ${{secrets.NUGET_TOKEN}}
-          MORYX_PACKAGE_TARGET: ${{ inputs.MORYX_PACKAGE_TARGET_RELEASE }}
-          MORYX_PACKAGE_TARGET_V3: ${{ inputs.MORYX_PACKAGE_TARGET_V3_RELEASE }}
-        run: dotnet nuget push artifacts/packages/*.nupkg --api-key $MORYX_NUGET_APIKEY --source $MORYX_PACKAGE_TARGET --skip-duplicate
+          github.ref_name == 'dev' ||
+          github.ref_name == 'future' ||
+          startsWith(github.head_ref || github.ref_name, 'integration/')
+        run: >
+          dotnet nuget push "artifacts/packages/"
+          --api-key ${{ secrets.MYGET_TOKEN }}
+          --source ${{ inputs.MORYX_PACKAGE_TARGET_DEV }}
+          --skip-duplicate
+          --symbol-api-key ${{ secrets.MYGET_TOKEN }}
+          --symbol-source ${{ inputs.MORYX_PACKAGE_TARGET_V3_DEV }}
+
+      # Use if tag
+      - name: Publish on NuGet (version tags)
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: >
+          dotnet nuget push artifacts/packages/*.nupkg
+          --api-key ${{ secrets.NUGET_TOKEN }}
+          --source ${{ inputs.MORYX_PACKAGE_TARGET_RELEASE }}
+          --skip-duplicate
