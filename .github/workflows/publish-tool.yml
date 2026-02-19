@@ -52,14 +52,15 @@ jobs:
 
       # Use if development branch 
       - name: Publish on MyGet
-        if: ${{ github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/future' || startsWith(github.ref, 'refs/heads/integration/') }} # dev, future and integration/* is published to myget
+        if: >
+          (github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'future')) ||
+          (github.event_name == 'pull_request' && startsWith(github.head_ref, 'integration/'))
         env:
           MORYX_NUGET_APIKEY: ${{secrets.MYGET_TOKEN}}
           MORYX_PACKAGE_TARGET: ${{ inputs.MORYX_PACKAGE_TARGET_DEV }}
           MORYX_PACKAGE_TARGET_V3: ${{ inputs.MORYX_PACKAGE_TARGET_V3_DEV }}
         run: dotnet nuget push "artifacts/packages/" --api-key $MORYX_NUGET_APIKEY --source $MORYX_PACKAGE_TARGET --skip-duplicate --symbol-api-key $MORYX_NUGET_APIKEY --symbol-source $MORYX_PACKAGE_TARGET_V3
     
-
        # Use if tag
       - name: Publish on NuGet
         if: ${{ startsWith(github.ref, 'refs/tags/v') }} # Version Tags are published to nuget
