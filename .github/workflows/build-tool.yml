@@ -60,23 +60,24 @@ jobs:
           echo "INFORMATIONAL_VERSION = ${INFORMATIONAL_VERSION}"
           dotnet build --configuration Release --no-restore -p:AssemblyVersion=$ASSEMBLY_VERSION -p:FileVersion=$FILE_VERSION -p:InformationalVersion=$INFORMATIONAL_VERSION
         
-      - name: Execute dotnet pack with release version
-        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      - name: Execute dotnet pack
+        if: >
+          startsWith(github.ref, 'refs/tags/v') ||
+          github.ref_name == 'dev' ||
+          github.ref_name == 'future' ||
+          startsWith(github.head_ref || github.ref_name, 'integration/')
         run: |
-          RELEASE_VERSION="${{github.ref_name}}"
-          RELEASE_VERSION="${RELEASE_VERSION#v}"
-          echo "RELEASE_VERSION = ${RELEASE_VERSION}"
-          dotnet pack --configuration Release --no-build --no-restore --output artifacts/packages -p:PackageVersion=$RELEASE_VERSION
-         
-      - name: Execute dotnet pack with development version (dev, future, integration)
-        if: ${{ github.ref_name == 'dev' || github.ref_name == 'future' || startsWith(github.ref_name, 'integration/') }}
-        run: |
-          BRANCH_NAME="${{github.ref_name}}"
-          BRANCH_NAME="${BRANCH_NAME//\//-}"
-          PACKAGE_VERSION="$(cat VERSION)"-"${BRANCH_NAME}"."${{github.run_number}}"
+          if [[ "${{ startsWith(github.ref, 'refs/tags/v') }}" == "true" ]]; then
+            PACKAGE_VERSION="${{ github.ref_name }}"
+            PACKAGE_VERSION="${PACKAGE_VERSION#v}"
+          else
+            BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
+            BRANCH_NAME="${BRANCH_NAME//\//-}"
+            PACKAGE_VERSION="$(cat VERSION)-${BRANCH_NAME}.${{ github.run_number }}"
+          fi
           echo "PACKAGE_VERSION = ${PACKAGE_VERSION}"
           dotnet pack --configuration Release --no-build --no-restore --output artifacts/packages -p:PackageVersion=$PACKAGE_VERSION
-        
+      
       - name: Upload package artifacts
         uses: actions/upload-artifact@v4
         with:
