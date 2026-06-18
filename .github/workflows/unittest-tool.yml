@@ -9,6 +9,10 @@ on:
       REPOSITORY_NAME:
         required: true
         type: string
+      node_version:
+        required: false
+        type: string
+        default: '20'
 
 jobs:
   UnitTests:
@@ -25,9 +29,9 @@ jobs:
           dotnet-version: ${{ inputs.dotnet_sdk_version }}
 
       - name: Setup Node version
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: ${{ inputs.node_version }}
 
       - name: Clean
         run: dotnet clean && dotnet nuget locals all --clear
