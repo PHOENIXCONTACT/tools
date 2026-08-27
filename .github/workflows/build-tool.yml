@@ -28,7 +28,7 @@ jobs:
           node-version: ${{ inputs.node_version }}
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ inputs.dotnet_sdk_version }}
 
@@ -83,7 +83,7 @@ jobs:
           dotnet pack --configuration Release --no-build --no-restore --output artifacts/packages -p:PackageVersion=$PACKAGE_VERSION
       
       - name: Upload package artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{inputs.REPOSITORY_NAME}}-packages
           path: artifacts/packages/

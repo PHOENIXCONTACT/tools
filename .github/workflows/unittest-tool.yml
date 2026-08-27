@@ -24,7 +24,7 @@ jobs:
           lfs: true
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ inputs.dotnet_sdk_version }}
 
@@ -46,7 +46,7 @@ jobs:
         run: dotnet test --no-build --filter FullyQualifiedName!~Integration --collect:"XPlat Code Coverage"
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{inputs.REPOSITORY_NAME}}-test-results
           path: src/Tests/**/TestResults/**/coverage.cobertura.xml
