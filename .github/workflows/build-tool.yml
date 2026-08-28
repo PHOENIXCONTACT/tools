@@ -64,6 +64,10 @@ jobs:
           echo "INFORMATIONAL_VERSION = ${INFORMATIONAL_VERSION}"
           dotnet build --configuration Release --no-restore -p:AssemblyVersion=$ASSEMBLY_VERSION -p:FileVersion=$FILE_VERSION -p:InformationalVersion=$INFORMATIONAL_VERSION
         
+      - name: Compute version
+        id: version
+        uses: ./.github/actions/compute-version
+
       - name: Execute dotnet pack
         if: >
           startsWith(github.ref, 'refs/tags/v') ||
@@ -71,14 +75,7 @@ jobs:
           github.ref_name == 'future' ||
           startsWith(github.head_ref || github.ref_name, 'integration/')
         run: |
-          if [[ "${{ startsWith(github.ref, 'refs/tags/v') }}" == "true" ]]; then
-            PACKAGE_VERSION="${{ github.ref_name }}"
-            PACKAGE_VERSION="${PACKAGE_VERSION#v}"
-          else
-            BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
-            BRANCH_NAME="${BRANCH_NAME//\//-}"
-            PACKAGE_VERSION="$(cat VERSION)-${BRANCH_NAME}.${{ github.run_number }}"
-          fi
+          PACKAGE_VERSION="${{ steps.version.outputs.version }}"
           echo "PACKAGE_VERSION = ${PACKAGE_VERSION}"
           dotnet pack --configuration Release --no-build --no-restore --output artifacts/packages -p:PackageVersion=$PACKAGE_VERSION
       
