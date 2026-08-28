@@ -24,17 +24,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code 
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           lfs: true
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ inputs.dotnet_sdk_version }}
 
       - name: Setup Node version
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ inputs.node_version }}
 
@@ -51,11 +51,10 @@ jobs:
         run: >-
           dotnet test --no-build
           --filter FullyQualifiedName~Integration
-          --collect:"XPlat Code Coverage"
-          ${{ inputs.runsettings != '' && format('--settings {0}', inputs.runsettings) || '' }}
+          ${{ inputs.runsettings != '' && format('--settings {0}', inputs.runsettings) || '--collect:"XPlat Code Coverage"' }}
           
       - name: Upload test results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: ${{inputs.REPOSITORY_NAME}}-integration-test-results
           path: src/Tests/**/TestResults/**/coverage.cobertura.xml

@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code 
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           lfs: true
 
       - name: Download test results
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: ${{inputs.REPOSITORY_NAME}}-test-results
           path: artifacts/test-results
@@ -30,7 +30,7 @@ jobs:
           reporttypes: Html
           
       - name: Upload test results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: ${{inputs.REPOSITORY_NAME}}-coverage-results
           path: Coverage/
