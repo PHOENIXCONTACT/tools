@@ -13,17 +13,17 @@ runs:
       id: compute
       shell: bash
       run: |
-        base_version=$(tr -d '[:space:]' < VERSION)
-        if [ -z "$base_version" ]; then
+        BASE_VERSION=$(tr -d '[:space:]' < VERSION)
+        if [ -z "$BASE_VERSION" ]; then
           echo "VERSION file is empty or missing"
           exit 1
         fi
         if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-          version="${GITHUB_REF_NAME#v}"
+          VERSION="${GITHUB_REF_NAME#v}"
         else
-          branch_name="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
-          branch_slug="${branch_name//\//-}"
-          version="${base_version}-${branch_slug}.${GITHUB_RUN_NUMBER}"
+          BRANCH_NAME="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          BRANCH_SLUG="${BRANCH_NAME//\//-}"
+          VERSION="${BASE_VERSION}-${BRANCH_SLUG}.${GITHUB_RUN_NUMBER}"
         fi
-        echo "version=$version" >> "$GITHUB_OUTPUT"
-        echo "Determined version: $version"
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        echo "Determined version: $VERSION"
