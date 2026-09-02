@@ -1,0 +1,29 @@
+name: Compute Version
+description: Computes the product/package version from VERSION file and Git ref
+
+outputs:
+  version:
+    description: The computed version string (e.g. "10.9.2" for a release tag, "10.9.2-dev.42" for a branch)
+    value: ${{ steps.compute.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Compute version
+      id: compute
+      shell: bash
+      run: |
+        base_version=$(tr -d '[:space:]' < VERSION)
+        if [ -z "$base_version" ]; then
+          echo "VERSION file is empty or missing"
+          exit 1
+        fi
+        if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+          version="${GITHUB_REF_NAME#v}"
+        else
+          branch_name="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          branch_slug="${branch_name//\//-}"
+          version="${base_version}-${branch_slug}.${GITHUB_RUN_NUMBER}"
+        fi
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+        echo "Determined version: $version"
