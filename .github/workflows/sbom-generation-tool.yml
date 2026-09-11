@@ -1,0 +1,132 @@
+name: Generate Product SBOMs
+
+on:
+  workflow_call:
+    inputs:
+      REPOSITORY_NAME:
+        required: true
+        type: string
+      dotnet_sdk_version:
+        required: true
+        type: string
+      node_version:
+        required: false
+        type: string
+        default: '22'
+
+jobs:
+  generate-sboms:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Checkout tools
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          repository: phoenixcontact/tools
+          ref: main
+          path: .tools-internal
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+        with:
+          dotnet-version: ${{ inputs.dotnet_sdk_version }}
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Install CycloneDX .NET
+        run: |
+          dotnet tool install --global CycloneDX
+
+      - name: Install CycloneDX npm
+        run: |
+          npm install -g @cyclonedx/cyclonedx-npm
+
+      - name: Install CycloneDX CLI
+        run: |
+          curl -L https://github.com/CycloneDX/cyclonedx-cli/releases/latest/download/cyclonedx-linux-x64 -o cyclonedx
+          chmod +x cyclonedx
+          mkdir -p "$HOME/.local/bin"
+          mv cyclonedx "$HOME/.local/bin/cyclonedx"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Verify installations
+        run: |
+          dotnet-CycloneDX --version
+          cyclonedx-npm --version
+          cyclonedx --version
+
+      - name: Restore solution
+        run: |
+          dotnet restore
+
+      - name: Compute version
+        id: version
+        uses: ./.github/actions/compute-version
+
+      - name: Set PRODUCT_VERSION
+        run: echo "PRODUCT_VERSION=${{ steps.version.outputs.version }}" >> "$GITHUB_ENV"
+
+      - name: Generate SBOMs
+        shell: bash
+        run: bash .tools-internal/.github/scripts/generate-product-sboms.sh
+
+      - name: Merge all product SBOMs
+        shell: bash
+        run: bash .tools-internal/.github/scripts/merge-sboms.sh
+
+      - name: Show generated SBOMs
+        run: |
+          find sboms -type f
+
+      - name: Validate SBOMs
+        shell: bash
+        run: |
+          mapfile -d '' sbom_files < <(find sboms -type f -name "*.json" -print0)
+
+          if [ "${#sbom_files[@]}" -eq 0 ]; then
+            echo "No SBOM files found for validation"
+            exit 1
+          fi
+
+          echo "Found ${#sbom_files[@]} SBOM files for validation"
+
+          for sbom in "${sbom_files[@]}"; do
+            echo "Validating $sbom"
+
+            spec_version=$(jq -r '.specVersion // empty' "$sbom")
+
+            if [ -z "$spec_version" ]; then
+              echo "Missing CycloneDX specVersion in $sbom"
+              exit 1
+            fi
+
+            cyclonedx validate \
+              --input-file "$sbom" \
+              --input-format json \
+              --input-version "v${spec_version//./_}" \
+              --fail-on-errors
+          done
+
+      - name: Upload SBOMs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ${{ inputs.REPOSITORY_NAME }}-sbom
+          path: sboms/
+          if-no-files-found: warn
+
+      - name: Attach SBOM to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ github.ref_name }}" \
+            sboms/bom-all-products.json \
+            --clobber
