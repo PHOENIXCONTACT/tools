@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: phoenixcontact/tools
-          ref: main
+          ref: feature/sbom-generation-tool
           path: .tools-internal
 
       - name: Setup .NET
@@ -69,7 +69,7 @@ jobs:
 
       - name: Compute version
         id: version
-        uses: ./.github/actions/compute-version
+        uses: phoenixcontact/tools/.github/actions/compute-version@main
 
       - name: Set PRODUCT_VERSION
         run: echo "PRODUCT_VERSION=${{ steps.version.outputs.version }}" >> "$GITHUB_ENV"
